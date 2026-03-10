@@ -6,9 +6,9 @@
 
 int main(int argc, char *argv[])
 {
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    SDL_Texture *texture;
+    bool exit = false;
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
     SDL_Event event;
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -21,22 +21,23 @@ int main(int argc, char *argv[])
         return 3;
     }
 
-    while (1) {
-        SDL_PollEvent(&event);
-        if (event.type == SDL_EVENT_QUIT) {
-            break;
+    while (!exit) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                exit = true;
+            }
+            if (event.type == SDL_EVENT_KEY_DOWN && event.key.key == SDLK_ESCAPE) {
+                exit = true;
+            }
         }
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
         SDL_RenderClear(renderer);
-        SDL_RenderTexture(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
     }
 
-    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
     SDL_Quit();
-    
     return 0;
 }
